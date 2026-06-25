@@ -2,40 +2,111 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Bingo 90 Bolas - Tradicional</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#0f172a" id="meta-theme-color">
+    <title>Bingo 90 Bolas - Personalizable</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Bloquear scroll para que se sienta como una app nativa */
-        body {
-            overscroll-behavior-y: none;
-            background-color: #f0f4f8;
+        /* VARIABLES DE ENTORNO (CLARO / OSCURO) */
+        :root {
+            --bg-app: #0f172a;       /* slate-900 */
+            --bg-game: #1e293b;      /* slate-800 */
+            --text-app: #ffffff;
+            --text-subtitle: #93c5fd; /* blue-300 */
+            
+            /* Tema Azul (Por defecto) */
+            --c-primary: #1e3a8a;   
+            --c-secondary: #3b82f6; 
+            --c-accent: #bfdbfe;    
+            --c-text: #1e4b82;      
         }
-        
-        /* Animación para el marcador ("tinta") */
-        .dauber {
-            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            transform: scale(0);
-            opacity: 0;
+
+        .light-mode {
+            --bg-app: #f8fafc;       /* slate-50 */
+            --bg-game: #e2e8f0;      /* slate-200 */
+            --text-app: #0f172a;     /* slate-900 */
+            --text-subtitle: #334155;/* slate-700 */
         }
-        .marked .dauber {
-            transform: scale(1);
-            opacity: 1;
+
+        /* NUEVOS COLORES Y TEMAS */
+        .theme-red {
+            --c-primary: #7f1d1d;   
+            --c-secondary: #dc2626; 
+            --c-accent: #fecaca;    
+            --c-text: #7f1d1d;
         }
-        
-        /* Evitar selección de texto */
+        .theme-green {
+            --c-primary: #14532d;   
+            --c-secondary: #16a34a; 
+            --c-accent: #bbf7d0;    
+            --c-text: #14532d;
+        }
+        .theme-purple {
+            --c-primary: #4c1d95;   
+            --c-secondary: #7c3aed; 
+            --c-accent: #ddd6fe;    
+            --c-text: #4c1d95;
+        }
+        .theme-yellow {
+            --c-primary: #a16207;   /* yellow-700 */
+            --c-secondary: #eab308; /* yellow-500 */
+            --c-accent: #fef08a;    /* yellow-200 */
+            --c-text: #854d0e;      /* yellow-800 */
+        }
+        .theme-black {
+            --c-primary: #171717;   /* neutral-900 */
+            --c-secondary: #525252; /* neutral-500 */
+            --c-accent: #d4d4d4;    /* neutral-300 */
+            --c-text: #000000;      /* black */
+        }
+
+        /* CORRECCIÓN DE PANTALLA Y RAYA BLANCA */
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100vw;
+            height: 100vh;      
+            height: 100dvh;     
+            background-color: var(--bg-app); 
+            transition: background-color 0.3s ease;
+            overscroll-behavior: none;
+            overflow: hidden;
+        }
+
+        /* Clases utilitarias enlazadas a las variables */
+        .bg-primary { background-color: var(--c-primary); }
+        .bg-secondary { background-color: var(--c-secondary); }
+        .bg-accent { background-color: var(--c-accent); }
+        .text-custom { color: var(--c-text); }
+        .border-primary { border-color: var(--c-primary); }
+        .fill-secondary { fill: var(--c-secondary); }
+        .stroke-white { stroke: #ffffff; }
+
         .no-select {
             user-select: none;
             -webkit-user-select: none;
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* Patrón de fondo para el borde del cartón (estilo tradicional) */
-        .card-border {
-            background-image: radial-gradient(#3b82f6 20%, transparent 20%), radial-gradient(#3b82f6 20%, transparent 20%);
-            background-color: #1e3a8a;
+        /* Skin 0: Borde con patrón (Clásico) */
+        .skin-0-border {
+            background-image: radial-gradient(var(--c-secondary) 20%, transparent 20%), radial-gradient(var(--c-secondary) 20%, transparent 20%);
+            background-color: var(--c-primary);
             background-position: 0 0, 5px 5px;
             background-size: 10px 10px;
+        }
+
+        /* Tinta del rotulador (Dauber) */
+        .dauber {
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform: scale(0);
+            opacity: 0;
+            background-color: #ef4444; /* Rojo para destacar */
+            mix-blend-mode: multiply;
+        }
+        .marked .dauber {
+            transform: scale(1);
+            opacity: 0.65;
         }
 
         @media screen and (orientation: portrait) {
@@ -46,9 +117,9 @@
         }
     </style>
 </head>
-<body class="h-screen w-screen overflow-hidden font-sans text-slate-800 no-select">
+<body class="font-sans text-slate-800 no-select">
 
-    <!-- Advertencia de orientación -->
+    <!-- Advertencia de orientación vertical -->
     <div id="portrait-warning" class="fixed inset-0 bg-slate-900 z-[100] flex flex-col items-center justify-center text-white p-6 text-center">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-20 w-20 mb-6 animate-pulse text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
@@ -58,44 +129,73 @@
     </div>
 
     <!-- PANTALLA DE INICIO -->
-    <div id="start-screen" class="absolute inset-0 flex flex-col items-center justify-center bg-slate-900 z-40 transition-opacity duration-500">
-        <h1 class="text-5xl md:text-7xl font-black text-white mb-2 tracking-wider drop-shadow-lg text-center px-4">BINGO DE 90</h1>
-        <p class="text-blue-300 text-xl md:text-2xl mb-12 font-medium">Cartón Tradicional</p>
+    <div id="start-screen" class="absolute inset-0 flex flex-col items-center justify-center z-40 transition-opacity duration-500" style="background-color: var(--bg-app);">
+        <h1 class="text-5xl md:text-7xl font-black mb-2 tracking-wider drop-shadow-lg text-center px-4 transition-colors" style="color: var(--text-app);">BINGO DE 90</h1>
+        <p class="text-xl md:text-2xl mb-12 font-medium transition-colors" style="color: var(--text-subtitle);">Cartón Pro Personalizable</p>
         <button onclick="startGame()" class="bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 px-12 rounded-full text-2xl shadow-[0_0_20px_rgba(37,99,235,0.6)] transform hover:scale-105 transition-all active:scale-95 border-2 border-blue-400">
-            Generar Cartón
+            Jugar Ahora
         </button>
     </div>
 
     <!-- PANTALLA DE JUEGO -->
-    <div id="game-screen" class="hidden absolute inset-0 flex items-center justify-center bg-slate-200 p-2 sm:p-6">
+    <div id="game-screen" class="hidden absolute inset-0 flex items-center justify-center p-2 sm:p-4 pb-[env(safe-area-inset-bottom)] pl-[env(safe-area-inset-left)] pr-[env(safe-area-inset-right)] pt-[env(safe-area-inset-top)] transition-colors duration-300" style="background-color: var(--bg-game);">
         
-        <!-- Botón de Reiniciar -->
-        <button id="btn-reset" onclick="startResetProcess()" class="absolute top-2 right-2 sm:top-4 sm:right-4 bg-rose-600 hover:bg-rose-500 text-white font-bold py-2 px-3 sm:px-5 rounded-full shadow-lg transition-colors z-30 flex items-center gap-2 border-2 border-rose-800">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+        <!-- BARRA DE HERRAMIENTAS IZQUIERDA (Modo, Color, Skin) -->
+        <div class="absolute top-2 left-2 sm:top-4 sm:left-4 flex gap-2 z-30">
+            <!-- Botón Claro/Oscuro -->
+            <button onclick="toggleLightMode()" class="bg-slate-700 hover:bg-slate-600 text-white p-2 sm:p-3 rounded-full shadow-lg transition-colors border border-slate-600" title="Claro / Oscuro" id="btn-theme-mode">
+                <!-- Icono Luna por defecto -->
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 sm:h-6 sm:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                </svg>
+            </button>
+            <!-- Botón Cambiar Color -->
+            <button onclick="changeColor()" class="bg-slate-700 hover:bg-slate-600 text-white p-2 sm:p-3 rounded-full shadow-lg transition-colors border border-slate-600" title="Cambiar Color">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 sm:h-6 sm:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
+                </svg>
+            </button>
+            <!-- Botón Cambiar Skin -->
+            <button onclick="changeSkin()" class="bg-slate-700 hover:bg-slate-600 text-white p-2 sm:p-3 rounded-full shadow-lg transition-colors border border-slate-600" title="Cambiar Estilo">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 sm:h-6 sm:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+            </button>
+        </div>
+
+        <!-- BARRA DERECHA (Nuevo Cartón) -->
+        <button onclick="startResetProcess()" class="absolute top-2 right-2 sm:top-4 sm:right-4 bg-rose-600 hover:bg-rose-500 text-white py-2 px-4 rounded-full shadow-lg transition-colors z-30 flex items-center gap-2 border-2 border-rose-800" title="Nuevo Cartón">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 sm:h-6 sm:w-6" viewBox="0 0 20 20" fill="currentColor">
                 <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd" />
             </svg>
-            <span class="hidden sm:inline">Nuevo Cartón</span>
+            <span class="font-bold text-sm sm:text-base pr-1">Nuevo Cartón</span>
         </button>
 
-        <!-- Contenedor Principal del Cartón -->
-        <div class="w-full max-w-[1100px] aspect-[3/1] bg-white shadow-2xl flex flex-col card-border p-2 sm:p-3 rounded-lg">
+        <!-- CONTENEDOR PRINCIPAL DEL CARTÓN -->
+        <div id="card-container" class="w-full max-w-[1100px] aspect-[3/1] bg-white shadow-2xl flex flex-col p-2 sm:p-3 rounded-lg skin-0-border transition-all duration-300">
             
-            <div class="bg-white text-blue-900 text-xs sm:text-sm font-bold px-2 py-0.5 mb-1 w-max rounded opacity-90">
-                Cartón n.º <span id="carton-id">1</span>
+            <div class="flex justify-between items-end mb-1 px-1">
+                <div class="bg-white text-custom text-xs sm:text-sm font-bold px-2 py-0.5 rounded opacity-90 shadow-sm border border-slate-200">
+                    Cartón n.º <span id="carton-id">1</span>
+                </div>
+                <!-- Texto vertical falso a la derecha (Estilo Bolas) -->
+                <div id="side-text" class="hidden text-[8px] text-white opacity-70 tracking-widest uppercase origin-bottom-right transform -rotate-90 translate-y-4">
+                    Modelo Registrado
+                </div>
             </div>
 
-            <!-- Grid del Bingo (3 filas x 9 columnas) -->
-            <div id="bingo-grid" class="grid grid-cols-9 grid-rows-3 gap-[2px] flex-1 w-full h-full bg-blue-800 border-2 border-blue-800">
+            <!-- Grid del Bingo -->
+            <div id="bingo-grid" class="grid grid-cols-9 grid-rows-3 flex-1 w-full h-full bg-primary border-[2px] sm:border-[3px] border-primary transition-colors duration-300">
                 <!-- Se generará por JavaScript -->
             </div>
         </div>
     </div>
 
-    <!-- Modal de Confirmación -->
+    <!-- Modal de Confirmación para Reiniciar -->
     <div id="modal" class="hidden fixed inset-0 bg-slate-900 bg-opacity-80 z-50 flex items-center justify-center p-4 opacity-0 transition-opacity duration-300 backdrop-blur-sm">
         <div class="bg-white rounded-2xl shadow-2xl p-6 max-w-sm w-full transform scale-95 transition-transform duration-300 border-4 border-slate-200" id="modal-content">
             <h3 class="text-2xl font-black text-center text-slate-800 mb-2" id="modal-title">¿Atención?</h3>
-            <p class="text-center text-slate-600 mb-6 text-lg font-medium" id="modal-message">Mensaje del modal</p>
+            <p class="text-center text-slate-600 mb-6 text-lg font-medium" id="modal-message">Mensaje</p>
             <div class="flex justify-center space-x-3">
                 <button onclick="closeModal()" class="flex-1 px-4 py-3 bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold rounded-xl transition-colors">
                     Cancelar
@@ -108,12 +208,25 @@
     </div>
 
     <script>
+        // --- ESTADO DEL JUEGO ---
+        let currentCardData = [];
+        let markedCells = new Set();
+        
+        let currentSkin = 0; // 0: Clásico, 1: Estrellas, 2: Bolas
+        const totalSkins = 3;
+
+        let currentColor = 0; // 0: Azul, 1: Rojo, 2: Verde, 3: Morado, 4: Amarillo, 5: Negro
+        const themes = ['', 'theme-red', 'theme-green', 'theme-purple', 'theme-yellow', 'theme-black'];
+
+        let isLightMode = false;
+
         // --- NAVEGACIÓN ---
         function startGame() {
             const startScreen = document.getElementById('start-screen');
             const gameScreen = document.getElementById('game-screen');
             
-            renderCard();
+            generateNewCardData();
+            renderGrid();
             
             startScreen.classList.add('opacity-0');
             setTimeout(() => {
@@ -122,144 +235,191 @@
             }, 500);
         }
 
+        // --- CAMBIADORES DE APARIENCIA ---
+        
+        function toggleLightMode() {
+            isLightMode = !isLightMode;
+            const btn = document.getElementById('btn-theme-mode');
+            const metaTheme = document.getElementById('meta-theme-color');
+            
+            if (isLightMode) {
+                document.documentElement.classList.add('light-mode');
+                metaTheme.content = "#f8fafc";
+                // Cambiar a icono de Sol
+                btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 sm:h-6 sm:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>`;
+            } else {
+                document.documentElement.classList.remove('light-mode');
+                metaTheme.content = "#0f172a";
+                // Cambiar a icono de Luna
+                btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 sm:h-6 sm:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>`;
+            }
+        }
+
+        function changeColor() {
+            if(themes[currentColor]) document.documentElement.classList.remove(themes[currentColor]);
+            currentColor = (currentColor + 1) % themes.length;
+            if(themes[currentColor]) document.documentElement.classList.add(themes[currentColor]);
+        }
+
+        function changeSkin() {
+            currentSkin = (currentSkin + 1) % totalSkins;
+            renderGrid();
+            
+            const container = document.getElementById('card-container');
+            const sideText = document.getElementById('side-text');
+            
+            if (currentSkin === 0) {
+                container.className = 'w-full max-w-[1100px] aspect-[3/1] bg-white shadow-2xl flex flex-col p-2 sm:p-3 rounded-lg skin-0-border transition-all duration-300';
+                sideText.classList.add('hidden');
+            } else if (currentSkin === 1) {
+                container.className = 'w-full max-w-[1100px] aspect-[3/1] bg-primary shadow-2xl flex flex-col p-2 sm:p-3 rounded-lg transition-all duration-300';
+                sideText.classList.add('hidden');
+            } else if (currentSkin === 2) {
+                container.className = 'w-full max-w-[1100px] aspect-[3/1] bg-primary shadow-2xl flex flex-col p-2 sm:p-3 rounded-none transition-all duration-300';
+                sideText.classList.remove('hidden');
+            }
+        }
+
         // --- LÓGICA DEL BINGO 90 BOLAS ---
         const rangesConfig = [
-            { min: 1, max: 9 },    // Col 1
-            { min: 10, max: 19 },  // Col 2
-            { min: 20, max: 29 },  // Col 3
-            { min: 30, max: 39 },  // Col 4
-            { min: 40, max: 49 },  // Col 5
-            { min: 50, max: 59 },  // Col 6
-            { min: 60, max: 69 },  // Col 7
-            { min: 70, max: 79 },  // Col 8
-            { min: 80, max: 90 }   // Col 9 (tiene 11 números)
+            { min: 1, max: 9 }, { min: 10, max: 19 }, { min: 20, max: 29 },
+            { min: 30, max: 39 }, { min: 40, max: 49 }, { min: 50, max: 59 },
+            { min: 60, max: 69 }, { min: 70, max: 79 }, { min: 80, max: 90 }
         ];
 
-        // Generar una matriz de 3x9 donde haya exactamente 5 números por fila
-        // y al menos 1 número por columna.
         function generateValidLayout() {
             let isValid = false;
             let layout;
-            
             while (!isValid) {
-                layout = [
-                    [0,0,0,0,0,0,0,0,0],
-                    [0,0,0,0,0,0,0,0,0],
-                    [0,0,0,0,0,0,0,0,0]
-                ];
-                
-                // Para cada fila, elegimos 5 columnas al azar
+                layout = [[0,0,0,0,0,0,0,0,0], [0,0,0,0,0,0,0,0,0], [0,0,0,0,0,0,0,0,0]];
                 for (let r = 0; r < 3; r++) {
                     let cols = [0, 1, 2, 3, 4, 5, 6, 7, 8];
-                    // Barajar
                     for (let i = cols.length - 1; i > 0; i--) {
                         const j = Math.floor(Math.random() * (i + 1));
                         [cols[i], cols[j]] = [cols[j], cols[i]];
                     }
-                    // Coger las primeras 5
-                    for (let i = 0; i < 5; i++) {
-                        layout[r][cols[i]] = 1;
-                    }
+                    for (let i = 0; i < 5; i++) layout[r][cols[i]] = 1;
                 }
-                
-                // Comprobar que ninguna columna está totalmente vacía
                 isValid = true;
                 for (let c = 0; c < 9; c++) {
-                    if (layout[0][c] + layout[1][c] + layout[2][c] === 0) {
-                        isValid = false;
-                        break;
-                    }
+                    if (layout[0][c] + layout[1][c] + layout[2][c] === 0) { isValid = false; break; }
                 }
             }
             return layout;
         }
 
-        function generateCardData() {
+        function generateNewCardData() {
             const layout = generateValidLayout();
-            const cardData = [
+            currentCardData = [
                 [null,null,null,null,null,null,null,null,null],
                 [null,null,null,null,null,null,null,null,null],
                 [null,null,null,null,null,null,null,null,null]
             ];
+            markedCells.clear();
 
-            // Rellenar los huecos asignados con números aleatorios ordenados
             for (let c = 0; c < 9; c++) {
                 let countNeeded = layout[0][c] + layout[1][c] + layout[2][c];
                 if (countNeeded > 0) {
                     let nums = new Set();
-                    let min = rangesConfig[c].min;
-                    let max = rangesConfig[c].max;
-                    
                     while(nums.size < countNeeded) {
-                        nums.add(Math.floor(Math.random() * (max - min + 1)) + min);
+                        nums.add(Math.floor(Math.random() * (rangesConfig[c].max - rangesConfig[c].min + 1)) + rangesConfig[c].min);
                     }
-                    
-                    // Ordenar de menor a mayor (de arriba a abajo en el cartón)
                     let sortedNums = Array.from(nums).sort((a,b) => a - b);
-                    
                     let numIdx = 0;
                     for (let r = 0; r < 3; r++) {
                         if (layout[r][c] === 1) {
-                            cardData[r][c] = sortedNums[numIdx];
+                            currentCardData[r][c] = sortedNums[numIdx];
                             numIdx++;
                         }
                     }
                 }
             }
-            return cardData;
+            document.getElementById('carton-id').textContent = Math.floor(Math.random() * 9999) + 1;
         }
 
-        function renderCard() {
+        // --- RENDERIZADO VISUAL DEPENDIENDO DEL SKIN ---
+        function renderGrid() {
             const grid = document.getElementById('bingo-grid');
             grid.innerHTML = ''; 
             
-            // Randomizar el ID del cartón visual
-            document.getElementById('carton-id').textContent = Math.floor(Math.random() * 9999) + 1;
+            grid.className = `grid grid-cols-9 grid-rows-3 flex-1 w-full h-full bg-primary border-[2px] sm:border-[3px] border-primary transition-colors duration-300 ${currentSkin === 1 ? 'gap-1 p-1' : 'gap-[2px]'}`;
 
-            const cardData = generateCardData();
-
-            for (let row = 0; row < 3; row++) {
-                for (let col = 0; col < 9; col++) {
-                    const value = cardData[row][col];
+            for (let r = 0; r < 3; r++) {
+                for (let c = 0; c < 9; c++) {
+                    const value = currentCardData[r][c];
+                    const cellId = `${r}-${c}`;
+                    const isMarked = markedCells.has(cellId);
+                    
                     const cell = document.createElement('div');
                     
-                    if (value === null) {
-                        // CELDA VACÍA (Color azul claro clásico)
-                        cell.className = 'w-full h-full bg-[#a3c2e0] bg-opacity-70 flex items-center justify-center';
-                    } else {
-                        // CELDA CON NÚMERO
-                        cell.className = 'relative w-full h-full bg-white flex items-center justify-center cursor-pointer overflow-hidden transition-colors';
-                        
-                        // Número pequeño arriba a la izquierda
-                        const tinyText = document.createElement('span');
-                        tinyText.className = 'absolute top-0.5 left-1 text-[9px] sm:text-[11px] font-bold text-blue-800 opacity-60 pointer-events-none';
-                        tinyText.textContent = value;
-                        
-                        // Número central grande
-                        const textSpan = document.createElement('span');
-                        textSpan.className = 'relative z-10 font-bold text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-[#1e4b82] pointer-events-none tracking-tighter';
-                        textSpan.textContent = value;
-
-                        // Tinta para tachar (Rojo semi-transparente para que contraste con el azul)
-                        const dauber = document.createElement('div');
-                        dauber.className = 'dauber absolute w-3/4 h-3/4 rounded-full bg-red-500 opacity-60 pointer-events-none mix-blend-multiply';
-
-                        cell.appendChild(tinyText);
-                        cell.appendChild(dauber);
-                        cell.appendChild(textSpan);
-
-                        // Evento para tachar
-                        cell.addEventListener('click', function() {
-                            this.classList.toggle('marked');
-                        });
+                    if (value !== null) {
+                        cell.onclick = function() {
+                            if (markedCells.has(cellId)) {
+                                markedCells.delete(cellId);
+                                this.classList.remove('marked');
+                            } else {
+                                markedCells.add(cellId);
+                                this.classList.add('marked');
+                            }
+                        };
                     }
+
+                    // Skin 0: Clásico
+                    if (currentSkin === 0) {
+                        if (value === null) {
+                            cell.className = 'w-full h-full bg-accent opacity-90 flex items-center justify-center transition-colors duration-300';
+                        } else {
+                            cell.className = `relative w-full h-full bg-white flex items-center justify-center cursor-pointer overflow-hidden transition-colors ${isMarked ? 'marked' : ''}`;
+                            cell.innerHTML = `
+                                <span class="absolute top-0.5 left-1 text-[9px] sm:text-[11px] font-bold text-custom opacity-60 pointer-events-none transition-colors duration-300">${value}</span>
+                                <div class="dauber absolute w-[80%] h-[80%] rounded-full pointer-events-none"></div>
+                                <span class="relative z-10 font-bold text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-custom pointer-events-none tracking-tighter transition-colors duration-300">${value}</span>
+                            `;
+                        }
+                    } 
+                    // Skin 1: Estrellas
+                    else if (currentSkin === 1) {
+                        if (value === null) {
+                            cell.className = 'w-full h-full bg-white rounded flex items-center justify-center shadow-sm';
+                            cell.innerHTML = `
+                                <svg class="w-1/2 h-1/2 fill-secondary opacity-90 transition-colors duration-300" viewBox="0 0 24 24">
+                                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                                </svg>
+                            `;
+                        } else {
+                            cell.className = `relative w-full h-full bg-white rounded flex items-center justify-center cursor-pointer overflow-hidden shadow-sm ${isMarked ? 'marked' : ''}`;
+                            cell.innerHTML = `
+                                <span class="absolute top-0.5 left-1 text-[9px] sm:text-[11px] font-bold text-custom opacity-60 pointer-events-none transition-colors duration-300">${value}</span>
+                                <div class="dauber absolute w-[80%] h-[80%] rounded-full pointer-events-none"></div>
+                                <span class="relative z-10 font-bold text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-custom pointer-events-none tracking-tighter transition-colors duration-300">${value}</span>
+                            `;
+                        }
+                    }
+                    // Skin 2: Bolas
+                    else if (currentSkin === 2) {
+                        if (value === null) {
+                            cell.className = 'w-full h-full bg-secondary flex items-center justify-center transition-colors duration-300';
+                            cell.innerHTML = `
+                                <svg class="w-[60%] h-[60%] stroke-white opacity-80" viewBox="0 0 24 24" fill="none" stroke-width="1.5">
+                                    <circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/><path d="M2 12h20"/><path d="M4.93 6.5h14.14"/><path d="M4.93 17.5h14.14"/>
+                                </svg>
+                            `;
+                        } else {
+                            cell.className = `relative w-full h-full bg-white flex items-center justify-center cursor-pointer overflow-hidden ${isMarked ? 'marked' : ''}`;
+                            cell.innerHTML = `
+                                <div class="dauber absolute w-[90%] h-[90%] rounded-full pointer-events-none"></div>
+                                <span class="relative z-10 font-medium text-4xl sm:text-5xl md:text-6xl lg:text-[70px] text-slate-900 pointer-events-none tracking-tighter" style="font-family: Arial, sans-serif;">${value}</span>
+                            `;
+                        }
+                    }
+
                     grid.appendChild(cell);
                 }
             }
         }
 
 
-        // --- LÓGICA DEL MODAL DE DOBLE CONFIRMACIÓN ---
+        // --- MODAL Y REINICIO ---
         let resetConfirmationStep = 0;
         const modal = document.getElementById('modal');
         const modalContent = document.getElementById('modal-content');
@@ -287,7 +447,7 @@
         function startResetProcess() {
             resetConfirmationStep = 1;
             modalTitle.textContent = 'Nuevo Cartón';
-            modalMessage.textContent = '¿Quieres generar un cartón de bingo nuevo?';
+            modalMessage.textContent = '¿Generar un cartón de bingo aleatorio nuevo?';
             modalConfirmBtn.textContent = 'Sí, continuar';
             modalConfirmBtn.className = 'flex-1 px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition-colors shadow-md';
             openModal();
@@ -301,7 +461,8 @@
                 modalConfirmBtn.textContent = '¡Sí, reiniciar!';
                 modalConfirmBtn.className = 'flex-1 px-4 py-3 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl transition-colors shadow-md';
             } else if (resetConfirmationStep === 2) {
-                renderCard();
+                generateNewCardData();
+                renderGrid();
                 closeModal();
             }
         }
